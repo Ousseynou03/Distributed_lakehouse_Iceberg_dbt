@@ -1,0 +1,40 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredPackages">
+        <list>
+          <option value="request" />
+          <option value="Babel" />
+          <option value="chardet" />
+          <option value="decorator" />
+          <option value="docutils" />
+          <option value="ebaysdk" />
+          <option value="idna" />
+          <option value="num2words" />
+          <option value="passlib" />
+          <option value="polib" />
+          <option value="pydot" />
+          <option value="pyserial" />
+          <option value="python-dateutil" />
+          <option value="python-stdnum" />
+          <option value="pytz" />
+          <option value="qrcode" />
+          <option value="vobject" />
+          <option value="XlsxWriter" />
+          <option value="xlwt" />
+          <option value="zeep" />
+          <option value="soda-core-postgres" />
+          <option value="pytest" />
+        </list>
+      </option>
+    </inspection_tool>
+    <inspection_tool class="PyUnresolvedReferencesInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredIdentifiers">
+        <list>
+          <option value="airflow.providers.*" />
+        </list>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>

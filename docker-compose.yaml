@@ -49,8 +49,8 @@ x-airflow-common:
   # In order to add custom dependencies or upgrade provider distributions you can use your extended image.
   # Comment the image line, place your Dockerfile in the directory where you placed the docker-compose.yaml
   # and uncomment the "build" line below, Then run `docker-compose build` to build the images.
-  image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:3.1.8}
-  # build: .
+  # image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:3.0.6}
+  build: .
   env_file:
     - ${ENV_FILE_PATH:-.env}
   environment:
@@ -59,8 +59,8 @@ x-airflow-common:
     AIRFLOW__CORE__AUTH_MANAGER: airflow.providers.fab.auth_manager.fab_auth_manager.FabAuthManager
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
     AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres/airflow
-    AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
-    AIRFLOW__CORE__FERNET_KEY: ''
+    AIRFLOW__CELERY__BROKER_URL: redis://:@${REDIS_HOST:-redis}:${REDIS_PORT:-6379}/0
+    AIRFLOW__CORE__FERNET_KEY: '${AIRFLOW__CORE__FERNET_KEY:-vjfXUok0HMsIMZfIgKLRgJ8ieGG0Om7f6RzzAhBXJc=}'
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
     AIRFLOW__CORE__LOAD_EXAMPLES: 'true'
     AIRFLOW__CORE__EXECUTION_API_SERVER_URL: 'http://airflow-apiserver:8080/execution/'
@@ -314,24 +314,82 @@ services:
   # You can enable flower by adding "--profile flower" option e.g. docker-compose --profile flower up
   # or by explicitly targeted on the command line e.g. docker-compose up flower.
   # See: https://docs.docker.com/compose/profiles/
-  flower:
-    <<: *airflow-common
-    command: celery flower
-    profiles:
-      - flower
+  nessie-catalog:
+    image: projectnessie/nessie:0.76.6
+    container_name: nessie-catalog
     ports:
-      - "5555:5555"
+      - "19120:19120"
+  
+  minio:
+    image: minio/minio
+    container_name: minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_REGION: us-east-1
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
     healthcheck:
-      test: ["CMD", "curl", "--fail", "http://localhost:5555/"]
+      test: ["CMD", "curl", "--fail", "http://localhost:9000/minio/health/live"]
       interval: 30s
-      timeout: 10s
+      timeout: 20s
       retries: 5
       start_period: 30s
-    restart: always
+    entrypoint: >
+      /bin/sh -c
+      "minio server /data --console-address ':9001' &
+      sleep 5;
+      mc alias set admin http://minio:9000 minioadmin minioadmin;
+      mc mb admin/lakehouse;
+      tail -f /dev/null"
+
+
+  trino-coordinator:
+    image: trinodb/trino:476
+    container_name: trino-coordinator
+    ports:
+      - "9080:8080"
+    volumes:
+      - ./trino/coordinator/iceberg.properties:/etc/trino/iceberg.properties
+      - ./trino/catalog:/etc/trino/catalog
+      - ./trino/coordinator/init.sql:/etc/trino/init.sql
     depends_on:
-      <<: *airflow-common-depends-on
-      airflow-init:
-        condition: service_completed_successfully
+      - nessie-catalog
+      - minio
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/v1/info"]
+      interval: 30s
+      timeout: 20s
+      retries: 5
+      start_period: 30s
+  
+  trino-worker-1:
+    image: trinodb/trino:476
+    container_name: trino-worker-1
+    depends_on:
+      - trino-coordinator
+    volumes:
+      - ./trino/worker/config.properties:/etc/trino/config.properties
+      - ./trino/catalog:/etc/trino/catalog
+
+  trino-worker-2:
+    image: trinodb/trino:476
+    container_name: trino-worker-2
+    depends_on:
+      - trino-coordinator
+    volumes:
+      - ./trino/worker/config.properties:/etc/trino/config.properties
+      - ./trino/catalog:/etc/trino/catalog
+
+  trino-worker-3:
+    image: trinodb/trino:476
+    container_name: trino-worker-3
+    depends_on:
+      - trino-coordinator
+    volumes:
+      - ./trino/worker/config.properties:/etc/trino/config.properties
+      - ./trino/catalog:/etc/trino/catalog
 
 volumes:
   postgres-db-volume:
