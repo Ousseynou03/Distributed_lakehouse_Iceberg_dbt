@@ -1,0 +1,14 @@
+{"timestamp":"2026-04-13T21:26:56.316188","level":"info","event":"DAG bundles loaded: dags-folder, example_dags","logger":"airflow.dag_processing.bundles.manager.DagBundlesManager"}
+{"timestamp":"2026-04-13T21:26:56.316417","level":"info","event":"Filling up the DagBag from /opt/airflow/dags/ingestion/dag_fakestore_bronze.py","logger":"airflow.models.dagbag.DagBag"}
+{"timestamp":"2026-04-13T21:26:56.382147Z","level":"info","event":"Task instance is in running state","chan":"stdout","logger":"task"}
+{"timestamp":"2026-04-13T21:26:56.382241Z","level":"info","event":" Previous state of the Task instance: TaskInstanceState.QUEUED","chan":"stdout","logger":"task"}
+{"timestamp":"2026-04-13T21:26:56.382279Z","level":"info","event":"Current task name:log_summary","chan":"stdout","logger":"task"}
+{"timestamp":"2026-04-13T21:26:56.382311Z","level":"info","event":"Dag name:fakestore_bronze_ingestion","chan":"stdout","logger":"task"}
+{"timestamp":"2026-04-13T21:26:56.382757","level":"info","event":"=== Ingestion Bronze terminée ===","logger":"unusual_prefix_74d30159a26044ea6e62199c2dbfab12e1dea9f2_dag_fakestore_bronze"}
+{"timestamp":"2026-04-13T21:26:56.382864","level":"info","event":"  products → s3://lakehouse/bronze/products/year=2026/month=04/day=13/hour=21/raw.json","logger":"unusual_prefix_74d30159a26044ea6e62199c2dbfab12e1dea9f2_dag_fakestore_bronze"}
+{"timestamp":"2026-04-13T21:26:56.382935","level":"info","event":"  carts    → s3://lakehouse/bronze/carts/year=2026/month=04/day=13/hour=21/raw.json","logger":"unusual_prefix_74d30159a26044ea6e62199c2dbfab12e1dea9f2_dag_fakestore_bronze"}
+{"timestamp":"2026-04-13T21:26:56.383010","level":"info","event":"  users    → s3://lakehouse/bronze/users/year=2026/month=04/day=13/hour=21/raw.json","logger":"unusual_prefix_74d30159a26044ea6e62199c2dbfab12e1dea9f2_dag_fakestore_bronze"}
+{"timestamp":"2026-04-13T21:26:56.383083","level":"info","event":"Done. Returned value was: None","logger":"airflow.task.operators.airflow.providers.standard.decorators.python._PythonDecoratedOperator"}
+{"timestamp":"2026-04-13T21:26:56.388188Z","level":"info","event":"Task instance in success state","chan":"stdout","logger":"task"}
+{"timestamp":"2026-04-13T21:26:56.390983Z","level":"info","event":" Previous state of the Task instance: TaskInstanceState.RUNNING","chan":"stdout","logger":"task"}
+{"timestamp":"2026-04-13T21:26:56.391059Z","level":"info","event":"Task operator:<Task(_PythonDecoratedOperator): log_summary>","chan":"stdout","logger":"task"}
