@@ -38,7 +38,6 @@ x-airflow-common:
     - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
     - ${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config
     - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
-    - ${AIRFLOW_PROJ_DIR:-.}/pipeline:/opt/airflow/pipeline
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on
@@ -320,7 +319,7 @@ services:
     ports:
       - "9080:8080"
     volumes:
-      - ./trino/coordinator/iceberg.properties:/etc/trino/iceberg.properties
+      - ./trino/coordinator/config.properties:/etc/trino/config.properties
       - ./trino/catalog:/etc/trino/catalog
       - ./trino/coordinator/init.sql:/etc/trino/init.sql
     depends_on:
