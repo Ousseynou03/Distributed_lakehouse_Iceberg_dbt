@@ -3,6 +3,7 @@ from airflow.decorators import dag, task
 from airflow import settings
 
 
+
 DBT_ROOT_DIR = F"{settings.DAGS_FOLDER}/ecommerce_dbt"
 
 @dag(
@@ -40,7 +41,7 @@ def dag_pipeline():
     @task
     def seed_bronze(pipeline_meatdata):
         import logging
-
+        from dags.operators.dbt_operator import DbtOperator
         logger = logging.getLogger(__name__)
         logger.info("Starting seed_bronze task...")
 
