@@ -66,4 +66,9 @@ def dag_pipeline():
         except Exception as e:
             logger.error(f"Table don't exist or error connecting to Trino: {e}. Proceeding with seeding.")
 
-        #operator = DbtOperator
+        operator = DbtOperator(
+            task_id = 'seed_bronze_data_internal',
+            dbt_root_dir = DBT_ROOT_DIR,
+            dbt_command = 'seed',
+            full_refresh=True
+        )
